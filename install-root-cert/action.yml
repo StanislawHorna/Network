@@ -21,7 +21,7 @@ inputs:
   VAULT_CERT_SECRET_FIELD:
     description: "Path to the secret in Vault"
     required: false
-    default: pki/cert/ca
+    default: certificate
 
 runs:
   using: "composite"
