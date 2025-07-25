@@ -1,0 +1,55 @@
+name: Establish network connection to the site
+description: >
+  Connects to LAN using TailScale
+  and installs the root certificate for internal services
+
+inputs:
+  TS_OAUTH_CLIENT_ID:
+    description: "TailScale OAuth Client ID"
+    required: true
+  TS_OAUTH_SECRET_ID:
+    description: "TailScale OAuth Secret ID"
+    required: true
+  TS_CONNECTION_TAGS:
+    description: "TailScale connection tags"
+    required: false
+    default: tag:ci
+
+  VAULT_ROLE_ID:
+    description: "HashiCorp Vault Role ID"
+    required: true
+  VAULT_SECRET_ID:
+    description: "HashiCorp Vault Secret ID"
+    required: true
+
+  VAULT_ADDR:
+    description: "HashiCorp Vault Address"
+    required: false
+    default: http://10.0.10.10:8200
+  VAULT_CERT_SECRET_PATH:
+    description: "Path to the secret in Vault"
+    required: false
+    default: pki/cert/ca
+  VAULT_CERT_SECRET_FIELD:
+    description: "Path to the secret in Vault"
+    required: false
+    default: pki/cert/ca
+
+runs:
+  using: "composite"
+  steps:
+    - name: Connect Tailscale
+      uses: tailscale/github-action@v2
+      with:
+        oauth-client-id: ${{ inputs.TS_OAUTH_CLIENT_ID }}
+        oauth-secret: ${{ inputs.TS_OAUTH_SECRET_ID }}
+        tags: ${{ inputs.TS_CONNECTION_TAGS }}
+
+    - name: Install Root Certificate for Internal Services
+      uses: StanislawHorna/Network/install-root-cert@main
+      with:
+        VAULT_ROLE_ID: ${{ inputs.VAULT_ROLE_IDs }}
+        VAULT_SECRET_ID: ${{ inputs.VAULT_SECRET_IDs }}
+        VAULT_ADDR: ${{ inputs.VAULT_ADDRs }}
+        VAULT_CERT_SECRET_PATH: ${{ inputs.VAULT_CERT_SECRET_PATHs }}
+        VAULT_CERT_SECRET_FIELD: ${{ inputs.VAULT_CERT_SECRET_FIELDs }}

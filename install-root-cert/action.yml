@@ -1,0 +1,45 @@
+name: Install internal Root Certificate
+description: >
+  Installs the root certificate for internal services
+
+inputs:
+  VAULT_ROLE_ID:
+    description: "HashiCorp Vault Role ID"
+    required: true
+  VAULT_SECRET_ID:
+    description: "HashiCorp Vault Secret ID"
+    required: true
+
+  VAULT_ADDR:
+    description: "HashiCorp Vault Address"
+    required: false
+    default: http://10.0.10.10:8200
+  VAULT_CERT_SECRET_PATH:
+    description: "Path to the secret in Vault"
+    required: false
+    default: pki/cert/ca
+  VAULT_CERT_SECRET_FIELD:
+    description: "Path to the secret in Vault"
+    required: false
+    default: pki/cert/ca
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get Vault TLS certificate
+      id: vault-cert
+      uses: hashicorp/vault-action@v2
+      with:
+        url: ${{ inputs.VAULT_ADDR }}
+        method: approle
+        roleId: ${{ inputs.VAULT_ROLE_ID }}
+        secretId: ${{ inputs.VAULT_SECRET_ID }}
+        secrets: |
+          ${{ inputs.VAULT_CERT_SECRET_PATH }} ${{ inputs.VAULT_CERT_SECRET_FIELD }} | TLS_CRT
+
+    - name: Install internal CA certificate
+      shell: bash
+      run: |
+        echo "${{ steps.vault-cert.outputs.TLS_CRT }}" > internal-root-ca.crt
+        sudo cp internal-root-ca.crt /usr/local/share/ca-certificates/internal-root-ca.crt
+        sudo update-ca-certificates
