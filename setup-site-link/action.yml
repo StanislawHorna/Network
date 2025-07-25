@@ -51,5 +51,5 @@ runs:
         VAULT_ROLE_ID: ${{ inputs.VAULT_ROLE_IDs }}
         VAULT_SECRET_ID: ${{ inputs.VAULT_SECRET_IDs }}
         VAULT_ADDR: ${{ inputs.VAULT_ADDR }}
-        VAULT_CERT_SECRET_PATH: ${{ inputs.VAULT_CERT_SECRET_PATHs }}
-        VAULT_CERT_SECRET_FIELD: ${{ inputs.VAULT_CERT_SECRET_FIELDs }}
+        VAULT_CERT_SECRET_PATH: ${{ inputs.VAULT_CERT_SECRET_PATH }}
+        VAULT_CERT_SECRET_FIELD: ${{ inputs.VAULT_CERT_SECRET_FIELD }}
